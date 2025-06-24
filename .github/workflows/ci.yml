@@ -8,18 +8,31 @@ permissions:
 jobs:
   CI:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         php:
-          - '8.1'
-          - '8.2'
-          - '8.3'
+          - '5.6'
+          - '7.1'
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+
     steps:
-      - uses: shivammathur/setup-php@2.30.4
-        with:
-          php-version: ${{ matrix.php }}
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # faster checkout
-      - run: composer update --no-interaction --prefer-dist
-      - run: composer run test
+          fetch-depth: 2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.30.4
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring
+          coverage: none
+
+      - name: Install Dependencies
+        run: composer update --no-interaction --prefer-dist
+
+      - name: Run Tests
+        run: composer run test

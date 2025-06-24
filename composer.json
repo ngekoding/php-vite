@@ -1,21 +1,25 @@
 {
-    "name": "mindplay/php-vite",
+    "name": "ngekoding/php-vite",
     "type": "library",
     "license": "MPL-2.0",
     "description": "a lightweight PHP-backend integration for the Vite frontend build tool",
     "scripts": {
-        "test": "XDEBUG_MODE=coverage php test/test.php"
+        "test": "./vendor/bin/phpunit"
     },
     "autoload": {
         "psr-4": {
-            "mindplay\\vite\\": "src/"
+            "Ngekoding\\Vite\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ngekoding\\Vite\\": "test/"
         }
     },
     "require": {
-        "php": ">=8.1"
+        "php": ">=5.6"
     },
     "require-dev": {
-        "mindplay/testies": "^1.1",
-        "phpunit/php-code-coverage": "^10"
+        "phpunit/phpunit": "^5.7.0"
     }
 }

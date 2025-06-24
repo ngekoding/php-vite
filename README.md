@@ -1,14 +1,28 @@
-# `mindplay\php-vite`
+# php-vite
 
-[![PHP Version](https://img.shields.io/badge/php-8.1%2B-blue.svg)](https://packagist.org/packages/mindplay/php-vite)
-[![Build Status](https://github.com/mindplay-dk/php-vite/actions/workflows/ci.yml/badge.svg)](https://github.com/mindplay-dk/php-vite/actions/workflows/ci.yml)
+[![PHP Version](https://img.shields.io/badge/php-5.6%2B-blue.svg)](https://packagist.org/packages/ngekoding/php-vite)
+[![Build Status](https://github.com/mindplay-dk/php-vite/actions/workflows/ci.yml/badge.svg)](https://github.com/ngekoding/php-vite/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MPL--2.0-green)](https://opensource.org/license/mpl-2-0)
 
-This library provides a lightweight [backend integration](https://vitejs.dev/guide/backend-integration.html)
-for your PHP-based MPA, SPA, or PWA based on [Vite](https://vitejs.dev/).
+This library provides a lightweight [backend integration](https://vitejs.dev/guide/backend-integration.html) for your PHP-based MPA, SPA, or PWA based on [Vite](https://vitejs.dev/).
 
-It parses the [build manifest](https://vitejs.dev/config/build-options#build-manifest) (the `.vite/manifest.json` file)
-and produces the required `<script>` and `<link>` tags to load (and preload) scripts, CSS files, and other assets.
+It parses the [build manifest](https://vitejs.dev/config/build-options#build-manifest) (the `.vite/manifest.json` file) and produces the required `<script>` and `<link>` tags to load (and preload) scripts, CSS files, and other assets.
+
+## PHP 5.6 Compatible Version
+
+> ⚠️ This is a customized fork of the original [`mindplay-dk/php-vite`](https://github.com/mindplay-dk/php-vite) package.
+
+This version has been adapted to support **PHP 5.6 and above**, making it suitable for legacy projects that are still running on older PHP versions.
+
+### Key differences from the original:
+
+* Rewritten to remove syntax and language features that require PHP 8.1+
+* Compatible with PHP 5.6, 7.x, and newer
+* Namespaces changed to `Ngekoding\Vite` to distinguish from the original package
+* Test suite migrated to use PHPUnit
+
+If you're working on modern PHP (8.1+), you are encouraged to use the original package:
+👉 [mindplay-dk/php-vite](https://github.com/mindplay-dk/php-vite)
 
 ## Basic Usage
 
@@ -20,20 +34,20 @@ In the following steps, we'll cover usage of the library API only.
 #### 1. Load the `manifest.json` file created by Vite:
 
 ```php
-use mindplay\vite\Manifest;
+use Ngekoding\Vite\Manifest;
 
 $vite = new Manifest(
-    manifest_path: $your_root_dir . '/public/dist/.vite/manifest.json',
-    base_path: '/dist/',
-    dev: false
+    false,                      // dev mode (true = development, false = production)
+    '/path/to/manifest.json',   // path to manifest.json
+    '/dist/'                    // public base path
 );
 ```
 
-The `manifest_path` points to the Vite `manifest.json` file created for the production build.
+The constructor accepts three parameters:
 
-In this example, `dev` is `false`, so we'll be creating tags for the production assets.
-
-The `base_path` is relative to your public web root - it is the root folder from which Vite's production assets are served, and/or the root folder from which Vite serves assets dynamically in development mode.
+1. `dev` – set to `true` for development mode, or `false` for production mode.
+2. `manifestPath` – points to the Vite `manifest.json` file created for the production build.
+3. `basePath` – is relative to your public web root, it is the root folder from which Vite's production assets are served, and/or the root folder from which Vite serves assets dynamically in development mode.
 
 Note that, in development mode (when `dev` is set to `true`) the `manifest.json` file is unused, and not required.
 
@@ -83,23 +97,20 @@ For example:
 
 The service preloads any statically imported scripts and CSS files by default.
 
-In addition, you can configure it to preload other statically imported assets as well -
-for convenience, there are two methods to automatically configure preloading of all
-common image and font asset types:
+In addition, you can configure it to preload other statically imported assets as well - for convenience, there are two methods to automatically configure preloading of all common image and font asset types:
 
 ```php
 $manifest->preloadImages();
 $manifest->preloadFonts();
 ```
 
-You can also configure it to preload any other asset types - for example, to configure
-preloading of `.json` assets, you could add the following:
+You can also configure it to preload any other asset types - for example, to configure preloading of `.json` assets, you could add the following:
 
 ```php
 $manifest->preload(
-    ext: "json",
-    mime_type: "application/json",
-    preload_as: "fetch"
+    "json",              // file extension (without dot)
+    "application/json",  // MIME type
+    "fetch"              // preload `as` attribute
 );
 ```
 
@@ -110,7 +121,7 @@ Then create your tags as covered in the documentation above.
 For advanced use cases, you can also directly get the URL for an asset published by Vite:
 
 ```php
-$my_url = $manifest->getURL("consent-banner.ts");
+$url = $manifest->getURL("consent-banner.ts");
 ```
 
 You can use this feature to, for example:
